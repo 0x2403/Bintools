@@ -1,0 +1,27 @@
+#!/bin/bash
+
+res=$1				#Removes 0x if it is at the start of the address 
+check="${1:0:2}";
+if [ "$check" == "0x" ];then
+	res=${1:2}
+fi
+
+
+col="${res: -1}";		#If you copied a colon it removes it
+if [ "$col" == ":" ]; then
+	res=${res::-1}
+fi
+
+counter=${#res}			#If you copied 7 bits of an address it prefixes an 0 onto it e.g 8049183 -> 08049183
+if [ "$counter" == "7" ]; then
+	res="0"$res
+fi
+
+counter=${#res}
+if [ "$counter" == "8" ]; then #Converts the raw address into little endian 
+	byte1="\x"${res:0:2}
+	byte2="\x"${res:2:2}
+	byte3="\x"${res:4:2}
+	byte4="\x"${res:6:2}
+	echo $byte4$byte3$byte2$byte1
+fi
